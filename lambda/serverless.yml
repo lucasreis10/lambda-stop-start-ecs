@@ -1,0 +1,27 @@
+# serverless.yml
+
+service: stop-start-ecs-app
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+
+functions:
+  app:
+    handler: app.handler # reference the file and exported method
+    events: # events trigger lambda functions
+      - schedule:
+          rate: cron(0 7 * * ? *)
+          input:
+            action: stop
+            region: us-east-1
+            clusterName: cluster
+      - schedule:
+          rate: cron(0 22 * * ? *)
+          input:
+            action: start
+            region: us-east-1
+            clusterName: cluster
+            desiredCount: 2
